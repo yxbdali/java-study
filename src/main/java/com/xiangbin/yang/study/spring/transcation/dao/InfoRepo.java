@@ -2,6 +2,7 @@ package com.xiangbin.yang.study.spring.transcation.dao;
 
 import com.xiangbin.yang.study.spring.transcation.model.Info;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 

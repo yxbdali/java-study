@@ -5,12 +5,10 @@ import java.util.concurrent.TimeUnit;
 
 import com.xiangbin.yang.study.spring.transcation.dao.InfoRepo;
 import com.xiangbin.yang.study.spring.transcation.model.Info;
-import jdk.nashorn.internal.ir.IdentNode;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -26,7 +24,7 @@ public class DbService {
 
     public void insert(Info info) throws InterruptedException {
         infoRepo.save(info);
-        //infoRepo.flush();
+        infoRepo.flush();
         log.info("Wait for 10s...");
         TimeUnit.SECONDS.sleep(10);
         log.info("Wait finished!");
@@ -41,9 +39,18 @@ public class DbService {
         if (info != null) {
             info.setInfoStr(s);
             infoRepo.save(info);
-            TimeUnit.SECONDS.sleep(10);
+            infoRepo.flush();
             log.info("Finish update info({})", id);
+            TimeUnit.SECONDS.sleep(5);
         }
+        //throw new Error();
+    }
+
+    @Transactional(isolation = Isolation.DEFAULT)
+    public void deadLock(long id1, String val1, long id2, String val2) throws InterruptedException {
+        update(id1, val1);
+        //Thread.sleep(3000);
+        update(id2, val2);
     }
 
     public List<Info> listAll() {

@@ -39,7 +39,7 @@ public class SocketCh {
                         ServerSocketChannel server = (ServerSocketChannel)key.channel();
                         SocketChannel client = server.accept();
                         client.configureBlocking(false);
-                        client.register(selector,  SelectionKey.OP_WRITE);
+                        client.register(selector, SelectionKey.OP_WRITE);
                     }
                     else if (key.isReadable()) {
                         SocketChannel client = (SocketChannel)key.channel();
@@ -48,7 +48,8 @@ public class SocketCh {
                         do {
                             buffer.flip();
                             while (buffer.remaining() > 0) {
-                                out.print((char)buffer.get());
+                                char c = (char)buffer.get();
+                                out.print(c);
                             }
                             buffer.clear();
                             read = client.read(buffer);
@@ -57,14 +58,14 @@ public class SocketCh {
                     else if (key.isWritable()) {
                         SocketChannel client = (SocketChannel)key.channel();
                         ByteBuffer buffer = ByteBuffer.allocate(30);
-                        buffer.put("Hello! from NIO".getBytes(Charset.forName("utf-8")));
-                        out.println("Echo to client!");
+                        buffer.put("Hello! from NIO Server\r\n".getBytes(Charset.forName("utf-8")));
+                        out.println("Echo to client");
                         while (buffer.hasRemaining()) {
                             if (client.write(buffer) == 0) {
                                 break;
                             }
                         }
-                        client.close();
+                        //client.close();
                     }
                 }
             }
